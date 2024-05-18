@@ -220,3 +220,75 @@ remaining data in packet:
 
 046d hex2dec 1113 which with 1 decimal place is 111.3v (correct)
 
+remaining data in packet:
+14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+14 byte 32 battery voltage part 1/2
+b0 byte 33 battery voltage part 2/2
+
+14b0 hex2dec: 5296 and battery actual is 52.96v so correct
+
+remaining data in packet:
+024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+02 byte 34 charging current part 1/2
+42 byte 35 charging current part 2/2
+
+0242 hex2dec: 0578 or 05.78 amps which is correct
+
+remaining data in packet:
+01390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+
+01 byte 36 int temp part 1/2
+39 byte 37 int temp part 2/2
+
+0139 hex2dec 0313 or 31.3degrees c which is correct
+
+remaining data in packet:
+0000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+00 byte 38 int temp sensor 2 part 1/2
+00 byte 39 int temp sensor 2 part 2/2
+
+not implemented on my device
+
+remaining data in packet:
+006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+00 byte 40 ext temp sensor part 1/2
+6a byte 41 ext temp sensor part 2/2
+
+006a hex2dec = 0106 or 10.6 degrees c which is correct
+
+remaining data in packet:
+0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+00 byte 42 rfu
+00 byte 43 rfu
+
+remaining data in packet:
+000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+00 byte 44 days of power generation part 1/4
+00 byte 45 days of power generation part 2/4
+02 byte 46 days of power generation part 3/4
+a0 byte 47 days of power generation part 4/4
+
+000002a0 hex2dec = 672 (days) which sounds correct
+
+remaining data in packet:
+000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+00 byte 48 total kwh generated part 1/4
+0f byte 49 total kwh generated part 2/4
+16 byte 50 total kwh generated part 3/4
+d7 byte 51 total kwh generated part 4/4
+
+000f16d7 hex2dec: 988887 or 988.887kwh which is correct
+
+remaining data in packet:
+01011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+bytes 51-93 are mostly extra settings and control data, so those can be ignored.
+
