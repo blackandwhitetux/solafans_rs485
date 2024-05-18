@@ -159,10 +159,64 @@ remaining data in packet:
 remaining data in packet:
 12c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
 
-12 byte 16 this forms part1 of a 2 decimal place value
-c0 byte 17 this forms part2 of a 2 decimal place value
+12 byte 16 this forms part1 of a 2 decimal place value (rated voltage level)
+c0 byte 17 this forms part2 of a 2 decimal place value (rated voltage level)
 
-12c0 hex2dec: 4800 which is correct
+12c0 hex2dec: 48(.)00 which is correct, 48v
 
 remaining data in packet:
 16a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+16 byte 18: upper charge voltage part1 of a 2 decimal place value
+a8 byte 19: upper charge voltage part2 of a 2 decimal place value 
+
+16a8 hex2dec: 5800 58(.)00 58.00 volts which is correct
+
+remaining data in packet:
+164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+16 byte 20: float voltage limit part1 of a 2 decimal place value
+45 byte 21: float voltage limit part2 of a 2 decimal place value
+
+1645 hex2dec: 57.01v which sounds correct
+
+remaining data in packet:
+10680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+10 byte 22 low voltage discharge limit part1 of a 2 decimal place value
+68 byte 23 low voltage discharge limit part2 of a 2 decimal place value
+
+1068 hex2dec: 42.00v which sounds correct
+
+remaining data in packet:
+0fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+0f byte 24 Hardware maximum charging current limit part 1/2
+a0 byte 25 Hardware maximum charging current limit part 2/2
+
+0fa0 hex2dec: 4000: 40.00 amps is correct
+
+remaining data in packet:
+0fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+0f byte 26 defined charge limit 1/2
+a0 byte 27 defined charge limit 2/2
+
+0fa0 hex2dec: 40.00amps which is correct
+
+remaining data in packet:
+0fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+0f byte 28 running charging current limit? no idea part 1/2
+a0 byte 29 running charging current limit? no idea part 2/2
+
+0fa0 hex2dec 40.00amps which is correct
+
+remaining data in packet:
+046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+04 byte 30 pv voltage in part 1/2
+6d byte 31 pv voltage in part 2/2
+
+046d hex2dec 1113 which with 1 decimal place is 111.3v (correct)
+
