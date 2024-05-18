@@ -83,4 +83,14 @@ Bit	Description	Value Explanation	Value in Sample Data (0d = 00001101)
 remaining data in packet: 
 000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
 
-00 byte 5:
+00 byte 5: control status.
+Bit	Description	Value Explanation	Value in Sample Data (00)
+0 bit 0: Charging output relay	0 = off; 1 = on	0 (off)
+0 bit 1: Load output	0 = off; 1 = on	0 (off)
+0 bit 2: Fan	0 = off; 1 = on	0 (off)
+0 bit 3: RFU	Reserved for future use	0
+0 bit 4: Overcharge protection flag	0 = normal; 1 = overcharge protection	0 (normal)
+0 bit 5: Overvoltage flag	0 = normal; 1 = overvoltage	0 (normal)
+0 bit 6: RFU	Reserved for future use	0
+0 bit 7: RFU	Reserved for future use	0
+
