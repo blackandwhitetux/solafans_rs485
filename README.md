@@ -1,7 +1,8 @@
 MPPT Charger Data Query and Home Assistant Integration
 
 This repository contains two Python scripts for querying data from MPPT chargers over RS485 and integrating the data into Home Assistant. The scripts support querying two MPPT chargers and updating their respective sensors in Home Assistant.
-Files
+
+*Files*
 
     query_mppt.py: Script for querying MPPT charger data over RS485.
     homeassistant_dual.py: Script for querying two MPPT chargers and updating Home Assistant sensors every second.
