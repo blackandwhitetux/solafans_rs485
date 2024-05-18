@@ -37,10 +37,36 @@ Querying MPPT...
 Sending: 01b10100000000b3
 Received (93 bytes): 01b101000d000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
 
-so the structure is as follows:
+so the structure is as follows, where i give our data in bytes from left to right, and then the definition of each byte/bit according to the spec. i will chop off each bit of data so you can follow along.
 
-byte 0: the address of the mppt charger which is returning data - we will need to query multiple chargers later so this will be required
-byte 1: the command type which we issued and therefore the data subset that the inverter is returning
-byte 2: control code of some kind 0x01
-byte 3: battery voltage good/ng 0=good 1=bad
-byte 4:
+01 byte 0: the address of the mppt charger which is returning data - we will need to query multiple chargers later so this will be required
+
+remaining data in packet: b101000d000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+b1 byte 1: the command type which we issued and therefore the data subset that the inverter is returning
+
+remaining data in packet:
+01000d000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+01 byte 2: control code of some kind 0x01
+
+remaining data in packet:
+
+000d000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+00 byte 3: opearting status. 
+hex data: 00 binary data= 00000000 therefore no faults as per the below 
+0 bit 0: 0, battery auto identification passed, 1 = failed 
+0 bit 1: battery over discharge protection, 0=good 1=battery over discharge enabled (fault) 
+0 bit 2: fan status 0= normal 1= fan failure. 
+0 bit 3: temp status. 0 = normal 1= fault. 
+0 bit 4: dc output status 0 normal 1 short circuit (fault)
+0 bit 5: int temp probe 1 status 0 good 1 fault
+0 bit 6: int temp probe 2 status 0 good 1 fault
+0 bit 7:  ext temp probe status 0 good 1 fault
+
+remaining data in packet: 
+0d000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+0d byte 4: 
+
