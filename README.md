@@ -2,64 +2,58 @@
 
 This repository contains two Python scripts for querying data from MPPT chargers over RS485 and integrating the data into Home Assistant. The scripts support querying two MPPT chargers and updating their respective sensors in Home Assistant.
 
-* Files
+Files
 
-    query_mppt.py: Script for querying MPPT charger data over RS485.
-    homeassistant_dual.py: Script for querying two MPPT chargers and updating Home Assistant sensors every second.
+   * query_mppt.py: Script for querying MPPT charger data over RS485.
+   * homeassistant_dual.py: Script for querying two MPPT chargers and updating Home Assistant sensors every second.
 
-* Features
+Features
 
-    Queries MPPT chargers over RS485.
-    Parses the received data according to the provided protocol.
-    Updates Home Assistant with the parsed data.
-    Supports querying two MPPT chargers and updating their respective sensors.
+   * Queries MPPT chargers over RS485.
+   * Parses the received data according to the provided protocol.
+   * Updates Home Assistant with the parsed data.
+   * Supports querying two MPPT chargers and updating their respective sensors.
 
 # Getting Started
 
-* Prerequisites
+Prerequisites
 
-    Python 3.x
-    pyserial library
-    requests library
-    Home Assistant with REST API enabled
-    Long-lived access token for Home Assistant
+   * Python 3.x
+   * pyserial library
+   * requests library
+   * Home Assistant with REST API enabled
+   * Long-lived access token for Home Assistant
 
-* Installation
+Installation
 
-    Clone the repository:
+Clone the repository:
 
-    sh
+sh git clone https://github.com/blackandwhitetux/solafans_rs485.git
 
-git clone https://github.com/blackandwhitetux/solafans_rs485.git
 cd mppt-homeassistant
 
 Install the required Python libraries:
 
-sh
+sh pip install pyserial requests
 
-    pip install pyserial requests
+# Configuration
 
-* Configuration
+Home Assistant Configuration:
 
-    Home Assistant Configuration:
-        Replace YOUR_HA_URL and YOUR_LONG_LIVED_ACCESS_TOKEN in homeassistant_dual.py with your Home Assistant URL and token.
+* Replace YOUR_HA_URL and YOUR_LONG_LIVED_ACCESS_TOKEN in homeassistant_dual.py with your Home Assistant URL and token.
 
-    Serial Port Configuration:
-        Replace '/dev/ttyUSB0' in both scripts with the appropriate serial port for your system.
+Serial Port Configuration:
+* Replace '/dev/ttyUSB0' in both scripts with the appropriate serial port for your system.
 
-* Running the Scripts
+# Running the Scripts
 
-    Query MPPT Charger:
+Query MPPT Charger:
 
-    sh
-
-sudo python3 query_mppt.py
+sh sudo python3 query_mppt.py
 
 Home Assistant Integration for Dual MPPT Chargers:
 
-sh
-
-    sudo python3 homeassistant_dual.py
+sh sudo python3 homeassistant_dual.py
 
 # Protocol Description
 
@@ -129,7 +123,7 @@ Byte	Description	Example Value
 
 52-92	Extra settings and control data	N/A
 
-Credits
+# Credits
 
 Developed by James Preston. Protocol description and script implementation provided with assistance from ChatGPT.
 License
