@@ -54,7 +54,7 @@ remaining data in packet:
 
 000d000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
 
-00 byte 3: opearting status. 
+00 byte 3: operating status. 
 hex data: 00 binary data= 00000000 therefore no faults as per the below 
 0 bit 0: 0, battery auto identification passed, 1 = failed 
 0 bit 1: battery over discharge protection, 0=good 1=battery over discharge enabled (fault) 
@@ -63,10 +63,24 @@ hex data: 00 binary data= 00000000 therefore no faults as per the below
 0 bit 4: dc output status 0 normal 1 short circuit (fault)
 0 bit 5: int temp probe 1 status 0 good 1 fault
 0 bit 6: int temp probe 2 status 0 good 1 fault
-0 bit 7:  ext temp probe status 0 good 1 fault
+0 bit 7: ext temp probe status 0 good 1 fault
 
 remaining data in packet: 
 0d000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
 
 0d byte 4: 
 
+Bit	Description	Value Explanation	Value in Sample Data (0d = 00001101)
+1 bit 0: Charging status	0 = stop charging; 1 = charging	1 (charging)
+0 bit 1: Equalizing charge	1 = valid	0 (not valid)
+1 bit 2: Tracking	1 = valid	1 (valid)
+1 bit 3: Floating charge	1 = valid	1 (valid)
+0 bit 4: Charging current limit	1 = valid	0 (not valid)
+0 bit 5: Charging derating	1 = valid	0 (not valid)
+0 bit 6: Remote control prohibits charging	1 = valid	0 (not valid)
+0 bit 7: PV overvoltage	1 = valid	0 (not valid)
+
+remaining data in packet: 
+000001030404040104000012c016a8164510680fa00fa00fa0046d14b0024201390000006a0000000002a0000f16d701011388190016a8000a001200010002010800000001000000050000000803000000000000000000ad
+
+00 byte 5:
