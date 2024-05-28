@@ -2,6 +2,7 @@ import serial
 import struct
 import requests
 import time
+from decimal import Decimal, ROUND_DOWN
 
 # Configuration for the serial port
 SERIAL_PORT = '/dev/ttyUSB0'  # Replace with your serial port
@@ -14,11 +15,15 @@ QUERY_COMMAND_B = bytes.fromhex('02b10100000000b4')
 
 # Home Assistant configuration
 HA_URL = 'http://192.168.1.245:8123'
-HA_TOKEN = 'your_secret_token_here'
+HA_TOKEN = 'your_long_lived_ha_token'
 HEADERS = {
     'Authorization': f'Bearer {HA_TOKEN}',
     'Content-Type': 'application/json',
 }
+
+# Previous values to store the last known good values
+previous_total_kwh_a = None
+previous_total_kwh_b = None
 
 # Function to parse the response from the MPPT charger
 def parse_response(response):
@@ -29,7 +34,7 @@ def parse_response(response):
     parsed_data['mppt_address'] = response[0]
     parsed_data['command_type'] = response[1]
     parsed_data['control_code'] = response[2]
-    
+
     # Operating status
     operating_status = response[3]
     parsed_data['operating_status'] = {
@@ -99,37 +104,131 @@ def query_mppt_charger(command):
 
 # Function to update Home Assistant sensors
 def update_ha_sensors(data, entity_prefix):
+    units = {
+        'rated_voltage_level': 'V',
+        'upper_charge_voltage': 'V',
+        'float_voltage_limit': 'V',
+        'low_voltage_discharge_limit': 'V',
+        'hardware_max_charging_current_limit': 'A',
+        'defined_charge_limit': 'A',
+        'running_charging_current_limit': 'A',
+        'pv_voltage_in': 'V',
+        'battery_voltage': 'V',
+        'charging_current': 'A',
+        'int_temp': '°C',
+        'ext_temp': '°C',
+        'total_kwh_generated': 'kWh'
+    }
+
     for key, value in data.items():
         sensor_name = f"sensor.{entity_prefix}_{key}"
+        unit = units.get(key, '')
+        attributes = {
+            'unit_of_measurement': unit,
+            'friendly_name': key.replace('_', ' ').title()
+        }
+
+        if key == 'total_kwh_generated':
+            attributes.update({
+                'state_class': 'total_increasing',
+                'device_class': 'energy'
+            })
+
         state = {
             'state': value,
-            'attributes': {
-                'unit_of_measurement': '',  # Add appropriate units if needed
-                'friendly_name': key.replace('_', ' ').title()
-            }
+            'attributes': attributes
         }
+
         response = requests.post(f"{HA_URL}/api/states/{sensor_name}", headers=HEADERS, json=state)
         if response.status_code not in (200, 201):
             print(f"Failed to update sensor {sensor_name}: {response.status_code} - {response.text}")
+
+# Function to update the combined power output sensor
+def update_combined_power_sensor(charging_current_a, charging_current_b, battery_voltage_a):
+    charging_current_a_dec = Decimal(str(charging_current_a))
+    charging_current_b_dec = Decimal(str(charging_current_b))
+    battery_voltage_a_dec = Decimal(str(battery_voltage_a))
+    combined_power = (charging_current_a_dec + charging_current_b_dec) * battery_voltage_a_dec
+    combined_power = combined_power.quantize(Decimal('0.1'), rounding=ROUND_DOWN)  # Truncate to one decimal place
+    sensor_name = "sensor.mppt_charger_combined_power"
+    state = {
+        'state': float(combined_power),
+        'attributes': {
+            'unit_of_measurement': 'W',  # Watts
+            'friendly_name': 'MPPT Charger Combined Power',
+            'state_class': 'measurement',
+            'device_class': 'power'
+        }
+    }
+    response = requests.post(f"{HA_URL}/api/states/{sensor_name}", headers=HEADERS, json=state)
+    if response.status_code not in (200, 201):
+        print(f"Failed to update sensor {sensor_name}: {response.status_code} - {response.text}")
+
+# Function to update the combined total_kwh_generated sensor
+def update_combined_total_kwh_sensor(total_kwh_a, total_kwh_b):
+    global previous_total_kwh_a, previous_total_kwh_b
+
+    # Check if either value is zero or None
+    if total_kwh_a is None or total_kwh_a == 0:
+        total_kwh_a = previous_total_kwh_a
+    else:
+        previous_total_kwh_a = total_kwh_a
+
+    if total_kwh_b is None or total_kwh_b == 0:
+        total_kwh_b = previous_total_kwh_b
+    else:
+        previous_total_kwh_b = total_kwh_b
+
+    total_kwh_a_dec = Decimal(str(total_kwh_a))
+    total_kwh_b_dec = Decimal(str(total_kwh_b))
+    combined_total_kwh = total_kwh_a_dec + total_kwh_b_dec
+    combined_total_kwh = combined_total_kwh.quantize(Decimal('0.001'), rounding=ROUND_DOWN)  # Truncate to three decimal places
+    sensor_name = "sensor.mppt_charger_combined_total_kwh_generated"
+    state = {
+        'state': float(combined_total_kwh),
+        'attributes': {
+            'unit_of_measurement': 'kWh',  # Kilowatt-hours
+            'friendly_name': 'MPPT Charger Combined Total kWh Generated',
+            'state_class': 'total_increasing',
+            'device_class': 'energy'
+        }
+    }
+    response = requests.post(f"{HA_URL}/api/states/{sensor_name}", headers=HEADERS, json=state)
+    if response.status_code not in (200, 201):
+        print(f"Failed to update sensor {sensor_name}: {response.status_code} - {response.text}")
 
 if __name__ == "__main__":
     while True:
         try:
             data_a = query_mppt_charger(QUERY_COMMAND_A)
             update_ha_sensors(data_a, "mppt_charger_a")
-            
+
             data_b = query_mppt_charger(QUERY_COMMAND_B)
             update_ha_sensors(data_b, "mppt_charger_b")
-            
+
+            # Update combined power output sensor
+            update_combined_power_sensor(data_a['charging_current'], data_b['charging_current'], data_a['battery_voltage'])
+
+            # Update combined total kWh generated sensor
+            update_combined_total_kwh_sensor(data_a['total_kwh_generated'], data_b['total_kwh_generated'])
+
             print("MPPT Charger Data A:")
             for key, value in data_a.items():
                 print(f"A - {key}: {value}")
-                
+
             print("MPPT Charger Data B:")
             for key, value in data_b.items():
                 print(f"B - {key}: {value}")
-                
+
+            combined_power = (Decimal(str(data_a['charging_current'])) + Decimal(str(data_b['charging_current']))) * Decimal(str(data_a['battery_voltage']))
+            combined_power = combined_power.quantize(Decimal('0.1'), rounding=ROUND_DOWN)
+            print(f"Combined Power Output: {combined_power} W")
+
+            combined_total_kwh = Decimal(str(data_a['total_kwh_generated'])) + Decimal(str(data_b['total_kwh_generated']))
+            combined_total_kwh = combined_total_kwh.quantize(Decimal('0.001'), rounding=ROUND_DOWN)
+            print(f"Combined Total kWh Generated: {combined_total_kwh} kWh")
+
         except Exception as e:
             print(f"Error: {e}")
-        
+
         time.sleep(1)  # Wait for 1 second before querying again
