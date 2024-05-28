@@ -117,7 +117,7 @@ Byte	Description	Example Value
 
 42-43	Reserved	0000
 
-44-47	Days of power generation	000002a0 (672 days)
+44-47	Power generated today	000002a0 (00000672 wh generated today)
 
 48-51	Total kWh generated (3 decimal places)	000f16d7 (988.887kWh)
 
