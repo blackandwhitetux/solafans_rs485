@@ -82,7 +82,7 @@ def parse_response(response):
     parsed_data['charging_current'] = struct.unpack('>H', response[34:36])[0] / 100
     parsed_data['int_temp'] = struct.unpack('>H', response[36:38])[0] / 10
     parsed_data['ext_temp'] = struct.unpack('>H', response[40:42])[0] / 10
-    parsed_data['power_generated_today'] = struct.unpack('>H', response[44:47])[0] / 1000
+    parsed_data['power_generated_today'] = struct.unpack('>I', response[44:48])[0] / 1000
     parsed_data['total_kwh_generated'] = struct.unpack('>I', response[48:52])[0] / 1000
 
     return parsed_data
